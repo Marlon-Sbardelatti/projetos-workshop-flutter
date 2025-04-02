@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:api/character_details.dart';
 import 'package:api/character_model.dart';
 import 'package:api/colors.dart';
+import 'package:api/favorites_screen.dart';
+import 'package:api/shared_preferences_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -164,99 +166,109 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: const Text(
-            'Rick and Morty',
-          ),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text(
+          'Rick and Morty',
         ),
-        body: _isLoading
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
-            : Padding(
-                padding: const EdgeInsets.all(15),
-                child: Column(
-                  children: [
-                    TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Search',
-                          prefixIcon: const Icon(Icons.search),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
+      ),
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Padding(
+              padding: const EdgeInsets.all(15),
+              child: Column(
+                children: [
+                  TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Search',
+                        prefixIcon: const Icon(Icons.search),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        onChanged: (value) {
-                          if (_debounce?.isActive ?? false) _debounce!.cancel();
+                      ),
+                      onChanged: (value) {
+                        if (_debounce?.isActive ?? false) _debounce!.cancel();
 
-                          _debounce = Timer(const Duration(milliseconds: 100),
-                              () async {
-                            await _getCharacterByParam(value);
-                          });
-                        }),
-                    const SizedBox(height: 10),
-                    Expanded(
-                      child: GridView.builder(
-                        controller: _scrollController,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2),
-                        itemCount: _characters.length,
-                        itemBuilder: (context, index) {
-                          final character = _characters[index];
+                        _debounce =
+                            Timer(const Duration(milliseconds: 100), () async {
+                          await _getCharacterByParam(value);
+                        });
+                      }),
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: GridView.builder(
+                      controller: _scrollController,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2),
+                      itemCount: _characters.length,
+                      itemBuilder: (context, index) {
+                        final character = _characters[index];
 
-                          return MouseRegion(
-                            cursor: SystemMouseCursors.click,
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            CharacterDetailsScreen(
-                                                character: character)));
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Card(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15)),
-                                  elevation: 5,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      Expanded(
-                                          child: ClipRRect(
-                                        borderRadius:
-                                            const BorderRadius.vertical(
-                                                top: Radius.circular(15)),
-                                        child: Image.network(
-                                          character.image ?? '',
-                                          fit: BoxFit.cover,
-                                        ),
-                                      )),
-                                      Padding(
-                                        padding: const EdgeInsets.all(10),
-                                        child: Text(
-                                          character.name,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 18),
-                                        ),
+                        return MouseRegion(
+                          cursor: SystemMouseCursors.click,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          CharacterDetailsScreen(
+                                              character: character)));
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15)),
+                                elevation: 5,
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Expanded(
+                                        child: ClipRRect(
+                                      borderRadius: const BorderRadius.vertical(
+                                          top: Radius.circular(15)),
+                                      child: Image.network(
+                                        character.image ?? '',
+                                        fit: BoxFit.cover,
                                       ),
-                                    ],
-                                  ),
+                                    )),
+                                    Padding(
+                                      padding: const EdgeInsets.all(10),
+                                      child: Text(
+                                        character.name,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                        );
+                      },
                     ),
-                  ],
-                ),
-              ));
+                  ),
+                ],
+              ),
+            ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final ids = await SharedPreferencesHelper.getFavorites();
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => FavoritesScreen(ids: ids)));
+        },
+        child: Icon(Icons.favorite),
+      ),
+    );
   }
 }

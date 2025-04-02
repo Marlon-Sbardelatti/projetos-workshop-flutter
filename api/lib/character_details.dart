@@ -1,5 +1,6 @@
 import 'package:api/character_model.dart';
 import 'package:api/colors.dart';
+import 'package:api/shared_preferences_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -51,8 +52,8 @@ class _CharacterDetailsScreenState extends State<CharacterDetailsScreen> {
                     children: [
                       Text(
                         'Gender: ',
-                        style:
-                            TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20),
                       ),
                       Text(
                         widget.character.gender,
@@ -67,8 +68,8 @@ class _CharacterDetailsScreenState extends State<CharacterDetailsScreen> {
                     children: [
                       Text(
                         'Species: ',
-                        style:
-                            TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20),
                       ),
                       Text(
                         widget.character.species,
@@ -83,8 +84,8 @@ class _CharacterDetailsScreenState extends State<CharacterDetailsScreen> {
                     children: [
                       Text(
                         'Origin planet: ',
-                        style:
-                            TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20),
                       ),
                       Text(
                         widget.character.originPlanet,
@@ -93,6 +94,15 @@ class _CharacterDetailsScreenState extends State<CharacterDetailsScreen> {
                     ],
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: IconButton(
+                      onPressed: () {
+                        SharedPreferencesHelper.saveToFavorites(
+                            widget.character.id);
+                      },
+                      icon: Icon(Icons.favorite)),
+                )
               ],
             ),
           ),

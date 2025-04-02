@@ -78,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         _myText = value.isEmpty ? 'Escreva algo' : value;
                       });
                     },
-                  )
+                  ),
                 ],
               ),
             ),
