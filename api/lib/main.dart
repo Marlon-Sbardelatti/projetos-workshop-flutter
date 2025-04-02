@@ -189,7 +189,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         onChanged: (value) {
                           if (_debounce?.isActive ?? false) _debounce!.cancel();
 
-                          _debounce = Timer(const Duration(milliseconds: 650),
+                          _debounce = Timer(const Duration(milliseconds: 100),
                               () async {
                             await _getCharacterByParam(value);
                           });
